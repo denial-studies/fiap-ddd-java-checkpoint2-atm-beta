@@ -1,5 +1,6 @@
 package model;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -73,7 +74,7 @@ public abstract class Conta extends BaseEntity {
 	protected abstract void aplicarRegraDeTaxa();
 
 	private void depositar(Dinheiro valor) {
-		if (valor.getValor().signum() <= 0) {
+		if (valor.getValor().doubleValue() <= 0) {
 			throw new IllegalArgumentException("O valor do depósito deve ser maior que zero.");
 		}
 
@@ -82,7 +83,7 @@ public abstract class Conta extends BaseEntity {
 	}
 
 	private void sacar(Dinheiro valor) {
-		if (valor.getValor().signum() <= 0) {
+		if (valor.getValor().doubleValue() <= 0) {
 			throw new IllegalArgumentException("O valor do saque deve ser maior que zero.");
 		}
 		if (this.saldo.menorQue(valor)) {
