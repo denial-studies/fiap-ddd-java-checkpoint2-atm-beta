@@ -4,12 +4,12 @@ import java.time.LocalDate;
 import java.util.UUID;
 
 public abstract class BaseEntity {
-	private UUID id;
-	private LocalDate dataCriacao;
+	protected UUID id;
+	protected LocalDate dataCriacao;
 	
-	BaseEntity() {
+	protected BaseEntity() {
 		this.id = UUID.randomUUID();
-		this.dataCriacao = LocalDate.now(); // Doc disse que era hora do seu OS 
+		this.dataCriacao = LocalDate.now();
 	}
 	
 	public UUID getId() {
@@ -20,14 +20,11 @@ public abstract class BaseEntity {
 		return dataCriacao;
 	}
 	
-	public Boolean equals(BaseEntity obj) {
-		return this
-				.getId()
-				.toString()
-				.equals(
-						obj
-						.getId()
-						.toString()
-				);
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj) return true;
+		if (obj == null || getClass() != obj.getClass()) return false;
+		BaseEntity that = (BaseEntity) obj;
+		return id != null ? id.equals(that.id) : that.id == null;
 	}
 }
