@@ -16,7 +16,8 @@ public class ContaPoupanca extends Conta {
 		BigDecimal rendimentoValor = this.saldo.getValor().multiply(BigDecimal.valueOf(RENDIMENTO_MENSAL));
 		Dinheiro rendimento = new Dinheiro(rendimentoValor);
 		this.saldo = this.saldo.somar(rendimento);
-		this.movimentacoes.add(new Movimentacao(java.time.LocalDateTime.now(), rendimento, TipoMovimentacao.RENDIMENTO));
+		this.movimentacoes
+				.add(new Movimentacao(java.time.LocalDateTime.now(), rendimento, TipoMovimentacao.RENDIMENTO));
 	}
 
 	@Override
