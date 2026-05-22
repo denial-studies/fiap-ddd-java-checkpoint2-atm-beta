@@ -1,6 +1,9 @@
 package model.valueobjects;
 
-public class ContaAcesso {
+import model.exceptions.AcessoBloqueadoException;
+import model.interfaces.Autorizavel;
+
+public class ContaAcesso implements Autorizavel {
 	public static final Integer MAXIMO_TENTATIVAS = 3;
 	private String senha;
 	private Integer tentativas;
@@ -13,10 +16,17 @@ public class ContaAcesso {
 	}
 
 	public Boolean validarSenha(String senha) {
-		if (bloqueado) {
-			return false;
+		return this.senha.equals(senha);
+	}
+
+	// Método do Checkpoint 3
+	public Boolean autorizar(String senha) {
+		if (isBloqueado()) {
+			throw new AcessoBloqueadoException(
+					"A sua conta foi bloqueada por 3 tentativas erradas na senha. Reinicie a aplicação...");
 		}
-		if (this.senha.equals(senha)) {
+
+		if (validarSenha(senha)) {
 			resetarTentativas();
 			return true;
 		} else {
@@ -38,8 +48,10 @@ public class ContaAcesso {
 
 	@Override
 	public boolean equals(Object obj) {
-		if (this == obj) return true;
-		if (obj == null || getClass() != obj.getClass()) return false;
+		if (this == obj)
+			return true;
+		if (obj == null || getClass() != obj.getClass())
+			return false;
 		ContaAcesso that = (ContaAcesso) obj;
 		return senha != null ? senha.equals(that.senha) : that.senha == null;
 	}

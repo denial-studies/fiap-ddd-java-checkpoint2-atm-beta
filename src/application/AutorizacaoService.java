@@ -10,6 +10,6 @@ public class AutorizacaoService {
 	}
 
 	public Boolean autorizar(String senha) {
-		return this.conta.getContaAcesso().validarSenha(senha);
+		return this.conta.getContaAcesso().autorizar(senha);
 	}
 }

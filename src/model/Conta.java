@@ -1,11 +1,12 @@
 package model;
 
-import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+import model.exceptions.SaldoInsuficienteException;
+import model.exceptions.ValorInvalidoException;
 import model.valueobjects.ContaAcesso;
 import model.valueobjects.Dinheiro;
 import model.valueobjects.Movimentacao;
@@ -32,14 +33,11 @@ public abstract class Conta extends BaseEntity {
 	}
 
 	public void realizarSaque(Dinheiro valor) {
-		// Validar e debitar através do método privado (Template Method base)
 		sacar(valor);
-		// Aplicar a taxa específica (Template Method gancho)
 		aplicarRegraDeTaxa();
 	}
 
 	public void realizarDeposito(Dinheiro valor) {
-		// Validar e depositar através do método privado
 		depositar(valor);
 	}
 
@@ -75,7 +73,7 @@ public abstract class Conta extends BaseEntity {
 
 	private void depositar(Dinheiro valor) {
 		if (valor.getValor().doubleValue() <= 0) {
-			throw new IllegalArgumentException("O valor do depósito deve ser maior que zero.");
+			throw new ValorInvalidoException("O valor do depósito deve ser maior que zero.");
 		}
 
 		this.saldo = this.saldo.somar(valor);
@@ -84,10 +82,10 @@ public abstract class Conta extends BaseEntity {
 
 	private void sacar(Dinheiro valor) {
 		if (valor.getValor().doubleValue() <= 0) {
-			throw new IllegalArgumentException("O valor do saque deve ser maior que zero.");
+			throw new ValorInvalidoException("O valor do saque deve ser maior que zero.");
 		}
 		if (this.saldo.menorQue(valor)) {
-			throw new IllegalStateException("Saldo insuficiente para realizar o saque.");
+			throw new SaldoInsuficienteException("Saldo insuficiente para realizar o saque.");
 		}
 
 		this.saldo = this.saldo.subtrair(valor);

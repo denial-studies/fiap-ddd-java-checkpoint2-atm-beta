@@ -10,6 +10,9 @@ import application.ContaFactory;
 import application.ContaService;
 import model.Cliente;
 import model.Conta;
+import model.exceptions.AcessoBloqueadoException;
+import model.exceptions.SaldoInsuficienteException;
+import model.exceptions.ValorInvalidoException;
 import model.valueobjects.ContaAcesso;
 import model.valueobjects.Dinheiro;
 import model.valueobjects.Movimentacao;
@@ -208,7 +211,9 @@ public class TerminalBancarioController {
 			try {
 				contaService.realizarSaque(valor);
 				System.out.println(String.format("Valor de R$ %.02f sacado!", valor.getValor()));
-			} catch (Exception e) {
+			} catch (ValorInvalidoException e) {
+				System.out.println("Erro ao sacar: " + e.getMessage());
+			} catch (SaldoInsuficienteException e) {
 				System.out.println("Erro ao sacar: " + e.getMessage());
 			}
 		}
@@ -225,7 +230,9 @@ public class TerminalBancarioController {
 			try {
 				contaService.realizarDeposito(valor);
 				System.out.println(String.format("Valor de R$ %.02f depositado!", valor.getValor()));
-			} catch (Exception e) {
+			} catch (ValorInvalidoException e) {
+				System.out.println("Erro ao depositar: " + e.getMessage());
+			} catch (SaldoInsuficienteException e) {
 				System.out.println("Erro ao depositar: " + e.getMessage());
 			}
 		}
@@ -234,10 +241,15 @@ public class TerminalBancarioController {
 	private Boolean autenticar() {
 		System.out.print("Digite sua senha para autorizar a operação: ");
 		String senha = scanner.nextLine();
-		Boolean autorizado = autorizacaoService.autorizar(senha);
-		if (!autorizado) {
-			System.out.println("Operação não autorizada: Senha incorreta ou conta bloqueada.");
+		try {
+			if (autorizacaoService.autorizar(senha)) {
+				return true;
+			} else {
+				return false;
+			}
+		} catch (AcessoBloqueadoException e) {
+			System.out.println("Operação não autorizada: " + e.getMessage());
+			return false;
 		}
-		return autorizado;
 	}
 }
